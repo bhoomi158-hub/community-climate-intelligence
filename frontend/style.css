@@ -1,0 +1,257 @@
+:root {
+    --bg-color: #0f111a;
+    --panel-bg: rgba(26, 31, 46, 0.75);
+    --panel-border: rgba(255, 255, 255, 0.15);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.map-container {
+    width: 100%;
+    height: 100%;
+    background-color: #242f3e; 
+    z-index: 1;
+}
+
+/* Glassmorphism Panel styles */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+}
+
+.search-overlay {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 380px;
+    padding: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: calc(100vh - 48px);
+}
+@media (max-width: 900px) {
+    .search-overlay {
+        top: auto;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 92%;
+        max-width: 400px;
+        padding: 20px;
+        max-height: 55vh;
+    }
+}
+
+.search-overlay h1 { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); }
+.search-overlay p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+.search-box { position: relative; width: 100%; }
+.controls {
+    width: 100%; padding: 14px 16px; font-size: 0.95rem;
+    background: rgba(15, 17, 26, 0.9); border: 1px solid var(--panel-border);
+    border-radius: 10px; color: var(--text-primary); outline: none;
+    transition: all 0.2s ease; font-family: inherit;
+}
+.controls::placeholder { color: var(--text-secondary); }
+.controls:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+
+/* Dashboard List of Locations */
+.location-list {
+    list-style: none; overflow-y: auto; border-radius: 10px;
+    display: flex; flex-direction: column; gap: 8px; padding-right: 4px;
+}
+.location-list::-webkit-scrollbar { width: 6px; }
+.location-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+.location-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+.location-list::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+.list-item {
+    background: rgba(15, 17, 26, 0.6); border: 1px solid var(--panel-border);
+    border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s ease;
+}
+.list-item:hover, .list-item.selected { border-color: var(--accent); background: rgba(59, 130, 246, 0.15); }
+.list-item h3 { font-size: 1.05rem; margin-bottom: 6px; font-weight: 600; }
+.list-item p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4; }
+
+.tag-container { display: flex; gap: 8px; }
+.risk-tag { font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.risk-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5); }
+.risk-moderate { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.5); }
+.risk-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.5); }
+
+/* MapLibre popup UI */
+.maplibregl-popup-content {
+    background: var(--panel-bg); color: var(--text-primary); border: 1px solid var(--panel-border);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6); border-radius: 12px;
+    padding: 16px 14px 12px 14px; font-family: inherit;
+}
+.maplibregl-popup-tip { border-top-color: var(--panel-bg) !important; border-bottom-color: var(--panel-bg) !important; }
+.maplibregl-popup-content h3 { margin: 0 0 4px 0; font-size: 1.15rem; }
+.popup-sample-note { font-size: 0.75rem; color: #fcd34d; display: block; margin-bottom: 10px; }
+.maplibregl-popup-close-button { color: var(--text-secondary); font-size: 1.2rem; padding: 4px 8px; }
+
+/* Right Panel (Weather & Risks) */
+.weather-panel {
+    position: absolute; top: 24px; right: 24px; width: 440px; bottom: 24px;
+    z-index: 1000; display: flex; flex-direction: column; padding: 20px;
+    overflow-x: hidden; overflow-y: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+.weather-panel.hidden { transform: translateX(120%); opacity: 0; pointer-events: none; }
+
+/* Navigation Tabs */
+.panel-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-shrink: 0; }
+.tab-btn {
+    flex: 1; padding: 10px; background: rgba(15, 17, 26, 0.4);
+    border: 1px solid var(--panel-border); border-radius: 8px;
+    color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.tab-btn:hover { background: rgba(15, 17, 26, 0.8); }
+.tab-btn.active { background: rgba(59, 130, 246, 0.15); border-color: var(--accent); color: var(--text-primary); }
+
+.tab-content { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-right: 4px; }
+.tab-content.active { display: flex; }
+.tab-content::-webkit-scrollbar { width: 6px; }
+.tab-content::-webkit-scrollbar-track { background: transparent; }
+.tab-content::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+.tab-content::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Common Header */
+.weather-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    border-bottom: 1px solid var(--panel-border); padding-bottom: 16px; margin-bottom: 16px; flex-shrink: 0;
+}
+.weather-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+.weather-header p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;}
+
+.refresh-btn {
+    background: rgba(59, 130, 246, 0.2); border: 1px solid var(--accent); color: var(--accent-hover);
+    padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.refresh-btn:hover { background: var(--accent); color: white; }
+
+.weather-disclaimer {
+    background: rgba(234, 179, 8, 0.15); border: 1px solid var(--warning-border, rgba(234, 179, 8, 0.4));
+    padding: 12px; border-radius: 8px; font-size: 0.75rem; color: #fde047; margin-bottom: 20px; line-height: 1.5; flex-shrink: 0;
+}
+
+/* Weather Typographies */
+.weather-summary {
+    font-size: 0.95rem; font-weight: 500; line-height: 1.5; color: var(--text-primary);
+    margin-bottom: 24px; background: rgba(15, 17, 26, 0.5); padding: 12px; border-radius: 8px;
+    border-left: 3px solid var(--accent); flex-shrink: 0;
+}
+.current-weather { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-shrink: 0; }
+.current-temp { font-size: 3.8rem; font-weight: 700; }
+.current-desc { font-size: 1.15rem; color: var(--text-secondary); font-weight: 500; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; margin-bottom: 24px; flex-shrink: 0; }
+.stat-box { background: rgba(15, 17, 26, 0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--panel-border); }
+.stat-box label { display: block; font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.stat-box .stat-val { font-size: 1.1rem; font-weight: 600; }
+
+.weather-section-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid var(--panel-border); padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); flex-shrink: 0; }
+
+.hourly-list { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 24px; flex-shrink: 0; }
+.hourly-list::-webkit-scrollbar { height: 6px; }
+.hourly-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+.hourly-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+.hour-item { min-width: 65px; background: rgba(15, 17, 26, 0.4); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 8px; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.hour-time { font-size: 0.75rem; color: var(--text-secondary); }
+.hour-temp { font-size: 1rem; font-weight: 600; }
+.hour-precip { font-size: 0.7rem; color: #60a5fa; font-weight: 500; }
+
+.daily-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; flex-shrink: 0; }
+.daily-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(15, 17, 26, 0.4); border: 1px solid var(--panel-border); border-radius: 8px; }
+.daily-day { width: 30%; font-size: 0.85rem; font-weight: 600; }
+.daily-desc { width: 40%; font-size: 0.8rem; color: var(--text-secondary); text-align: left; }
+.daily-temps { width: 30%; font-size: 0.85rem; text-align: right; }
+.temp-high { color: #f8fafc; font-weight: 600; margin-right: 6px; }
+.temp-low { color: var(--text-secondary); }
+
+/* Interaction states */
+.loader-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); padding: 40px 0; }
+.spinner { width: 36px; height: 36px; border: 3px solid rgba(255, 255, 255, 0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.error-state { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 24px; border-radius: 12px; text-align: center; margin-top: 24px; flex-shrink: 0; }
+.error-state h3 { color: #fca5a5; margin-bottom: 8px; font-size: 1.1rem; }
+.error-state p { margin-bottom: 16px; font-size: 0.9rem; }
+
+.attribution { font-size: 0.7rem; text-align: center; color: var(--text-secondary); margin-top: auto; padding-top: 16px; flex-shrink: 0; }
+.attribution a { color: var(--accent); text-decoration: none; }
+
+
+/* ===========================
+ *   RISK SCORECARD DESIGNS
+ * =========================== */
+.risk-card {
+    background: rgba(15, 17, 26, 0.6);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+.risk-card-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+}
+.risk-card-header h4 { font-size: 1.05rem; }
+.data-badge {
+    font-size: 0.65rem; padding: 4px 6px; border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1); color: var(--text-secondary); border: 1px solid var(--panel-border);
+}
+.data-badge.high { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.3); }
+
+.score-track {
+    width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: 4px;
+}
+.score-fill {
+    height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.score-fill.level-low { background: #10b981; }
+.score-fill.level-moderate { background: #f59e0b; }
+.score-fill.level-high { background: #ef4444; }
+.score-fill.level-missing { background: var(--text-secondary); }
+
+.score-label {
+    display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px;
+}
+
+.risk-explanation {
+    font-size: 0.8rem; line-height: 1.4; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1);
+}
+.risk-config-box {
+    background: rgba(0, 0, 0, 0.3); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px; margin-top: 24px; margin-bottom: 16px; flex-shrink: 0;
+}
+.risk-config-box h4 { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }

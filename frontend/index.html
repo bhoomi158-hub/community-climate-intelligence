@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Climate Risk Intelligence</title>
+    <!-- Use Inter font for a modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Native MapLibre GL CSS -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Map Container -->
+        <div id="map" class="map-container"></div>
+        
+        <!-- Search UI Dashboard Overlay (Left) -->
+        <div class="search-overlay glass-panel">
+            <h1>Climate Risk Intelligence</h1>
+            <p>Select a local telemetry point or explicitly search any global neighborhood to model environmental risks.</p>
+            
+            <div class="search-box">
+                <input id="local-search-input" class="controls" type="text" placeholder="Search local or global (Press Enter)..." />
+            </div>
+            
+            <ul id="location-list" class="location-list">
+                <!-- Location list items will be injected here via JS -->
+            </ul>
+        </div>
+
+        <!-- Dynamic Side Panel (Right) -->
+        <div id="side-panel" class="weather-panel glass-panel hidden">
+            <!-- Tabs -->
+            <div class="panel-tabs">
+                <button id="tab-weather" class="tab-btn active" onclick="switchTab('weather')">Local Weather</button>
+                <button id="tab-risk" class="tab-btn" onclick="switchTab('risk')">Risk Intelligence</button>
+            </div>
+            
+            <!-- Universal Target Header -->
+            <div class="weather-header" id="panel-header">
+                <!-- Data populated dynamically -->
+            </div>
+
+            <!-- Missing/Error Messages Space -->
+            <div id="panel-errors"></div>
+
+            <!-- Content Area 1: Weather Outlook -->
+            <div id="content-weather" class="tab-content active">
+                <div class="weather-disclaimer">
+                    <strong>Critical Context:</strong> This panel provides a standard weather forecast dynamically pulled from Open-Meteo. It does <strong>not</strong> constitute an official severe weather warning or flood prediction.
+                </div>
+                <!-- Dynamic Weather Nodes Inject Here -->
+                <div id="weather-body"></div>
+                <div class="attribution">
+                    Weather forecast data provided freely by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a>.
+                </div>
+            </div>
+
+            <!-- Content Area 2: Algorithmic Hazard Risk Assessment -->
+            <div id="content-risk" class="tab-content">
+                <div class="weather-disclaimer" style="color:var(--text-primary); border-color:#8b5cf6; background:rgba(139, 92, 246, 0.1);">
+                    <strong>Scientific Disclaimer:</strong> This engine evaluates verifiable real-time open datasets against prototype thresholds. These metrics are strictly modelled estimates and are explicitly NOT scientifically validated alerts. Consult official IMD or Central Water Commission warnings for real events.
+                </div>
+                
+                <h3 class="weather-section-title">Algorithmic Risk Models</h3>
+                <!-- Dynamic Hazard Scorecards Inject Here -->
+                <div id="risk-body"></div>
+                
+                <!-- Prototype Configuration Display -->
+                <div class="risk-config-box">
+                    <h4>Prototype Score Configuration</h4>
+                    <pre id="config-printout" style="font-size:0.6rem; color:var(--text-secondary);"></pre>
+                </div>
+
+                <div class="attribution">
+                    Hazard context powered by Open-Meteo Historical Archive & Global Flood APIs.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Native MapLibre GL JS -->
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
